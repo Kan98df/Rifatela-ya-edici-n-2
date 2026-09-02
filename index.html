@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rífatela Ya</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#020000;--panel:#0b0103;--panel2:#140307;--red:#ff174f;--red2:#9e0b2f;--text:#fff;--muted:#c99aa7;--line:#5c1027;--green:#35df72;--yellow:#ffd23f}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at top,#230008 0,#060001 35%,#000 100%);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+a{color:inherit}button,input,textarea{font:inherit}button{cursor:pointer}.wrap{width:min(1180px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:rgba(2,0,0,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}.nav{height:68px;display:flex;align-items:center;gap:18px}.brand{font-weight:1000;font-size:22px}.brand span{color:var(--red);text-shadow:0 0 12px var(--red)}.spacer{flex:1}.nav a{text-decoration:none;font-size:13px;font-weight:800;color:#eecbd3}
+.hero{padding:48px 0 30px;text-align:center}.eyebrow{color:var(--red);font-weight:900;letter-spacing:.18em}.ticker{overflow:hidden;border:1px solid var(--red2);border-radius:999px;margin:16px auto 22px;background:#100003;max-width:760px}.ticker-track{display:flex;width:max-content;animation:slide 13s linear infinite}.ticker-track span{padding:10px 28px;font-weight:900;color:#ff809e}@keyframes slide{to{transform:translateX(-50%)}}
+.hero h1{font-size:clamp(42px,9vw,92px);margin:0;text-shadow:0 0 22px rgba(255,23,79,.5)}.hero p{max-width:720px;margin:14px auto;color:#dcbcc4;font-size:18px;line-height:1.6}
+.btn{border:none;border-radius:12px;padding:13px 18px;font-weight:900}.primary{background:var(--red);color:#fff;box-shadow:0 0 22px rgba(255,23,79,.35)}.ghost{background:#16040a;color:#fff;border:1px solid var(--line)}
+section{padding:34px 0}.title{font-size:32px;margin:0 0 7px}.sub{color:var(--muted);margin:0 0 20px;line-height:1.6}.card{background:linear-gradient(180deg,#100205,#070001);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 0 20px rgba(255,23,79,.05)}
+.ticket-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:9px}.ticket{aspect-ratio:1;border-radius:10px;border:1px solid var(--line);background:#080002;color:#fff;font-weight:900}.ticket:hover{border-color:var(--red);box-shadow:0 0 12px rgba(255,23,79,.28)}.ticket.selected{background:var(--red);border-color:#fff;box-shadow:0 0 17px rgba(255,23,79,.5)}.ticket.reserved{background:#382f08;color:#ffe368;border-color:#816e16;cursor:not-allowed}.ticket.sold{background:#370711;color:#ff95ad;border-color:#7b1931;cursor:not-allowed}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}.tag{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:800}.dot{width:10px;height:10px;border-radius:50%}
+.reserve-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}label{display:block;margin:13px 0 6px;font-size:13px;font-weight:800;color:#eac8d0}input,textarea{width:100%;background:#050001;color:#fff;border:1px solid var(--line);border-radius:11px;padding:12px;outline:none}input:focus,textarea:focus{border-color:var(--red);box-shadow:0 0 10px rgba(255,23,79,.2)}.summary strong{font-size:30px}.muted{color:var(--muted)}.notice{padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#110207;color:#d8afb9;font-size:13px}
+.prize{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}.media{min-height:280px;border:1px dashed var(--line);border-radius:18px;display:grid;place-items:center;overflow:hidden;background:#050001}.media img,.media video,.media iframe{width:100%;height:100%;min-height:280px;object-fit:cover;border:0}.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.pay-val{font-size:20px;font-weight:900;word-break:break-word}.confirmation{margin-top:16px;border:1px solid var(--red);box-shadow:0 0 24px rgba(255,23,79,.15)}.chips{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.chip{padding:7px 9px;border-radius:9px;background:#19050b;border:1px solid var(--red);font-weight:900}.winner{border:1px solid var(--red);box-shadow:0 0 30px rgba(255,23,79,.25);text-align:center}.winner strong{display:block;font-size:52px;color:#ff668b;margin:8px 0}
+footer{padding:28px 0;border-top:1px solid var(--line);color:#bd909b}
+@media(max-width:900px){.ticket-grid{grid-template-columns:repeat(6,1fr)}.reserve-grid,.prize,.pay-grid{grid-template-columns:1fr}.nav a{display:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><div class="brand">RÍFATELA <span>YA</span></div><div class="spacer"></div><a href="#boletos">Boletos</a><a href="#premio">Premio</a><a href="#pagos">Pagos</a><a href="admin.html">Admin</a></div></header>
+
+<main>
+<section class="hero" id="inicio"><div class="wrap">
+<div class="eyebrow">RIFA ESPECIAL</div>
+<div class="ticker"><div class="ticker-track"><span>↓ DESLIZA · BOLETOS MÁS ABAJO ↓</span><span>↓ DESLIZA · BOLETOS MÁS ABAJO ↓</span><span>↓ DESLIZA · BOLETOS MÁS ABAJO ↓</span><span>↓ DESLIZA · BOLETOS MÁS ABAJO ↓</span></div></div>
+<h1 id="heroTitle">RÍFATELA YA</h1><p id="heroDescription">Participa por un premio único de $5,000 MXN en efectivo.</p>
+<button class="btn primary" id="heroButton">ELEGIR BOLETOS</button>
+<div id="winnerBox" class="card winner" style="display:none;margin-top:24px"><div class="muted">BOLETO GANADOR</div><strong id="winnerTicket">---</strong><div id="winnerDate" class="muted"></div></div>
+</div></section>
+
+<section id="boletos"><div class="wrap">
+<h2 class="title" id="ticketTitle">ELIGE TUS BOLETOS</h2><p class="sub" id="ticketDescription">Selecciona tus números disponibles.</p>
+<div class="legend"><span class="tag"><i class="dot" style="background:var(--green)"></i>Disponible</span><span class="tag"><i class="dot" style="background:var(--yellow)"></i>Apartado</span><span class="tag"><i class="dot" style="background:var(--red)"></i>Vendido</span></div>
+<div class="card"><div id="ticketGrid" class="ticket-grid"></div></div>
+<div class="reserve-grid" style="margin-top:18px">
+<div class="card">
+<h3>Reserva tus boletos</h3>
+<label>Nombre</label><input id="customerName" placeholder="Tu nombre">
+<label>Teléfono / WhatsApp</label><input id="customerPhone" placeholder="Ej. 5512345678">
+<label>Dirección (opcional)</label><textarea id="customerAddress" placeholder="Opcional"></textarea>
+<button class="btn primary" id="reserveBtn" style="margin-top:14px;width:100%">RESERVAR BOLETOS</button>
+<div id="reserveError" style="color:#ff8ca6;margin-top:10px"></div>
+</div>
+<div class="card summary">
+<div class="muted">Boletos seleccionados</div><div id="selectedChips" class="chips"><span class="muted">Ninguno</span></div>
+<div class="muted">Total</div><strong id="selectedTotal">$0 MXN</strong>
+<p class="notice" style="margin-top:14px">Los boletos se bloquean en el servidor al confirmar la reserva para evitar duplicados.</p>
+</div></div>
+<div id="confirmation" class="card confirmation" style="display:none"></div>
+</div></section>
+
+<section id="premio"><div class="wrap prize">
+<div><h2 class="title" id="prizeTitle">PREMIO ÚNICO</h2><p class="sub" id="prizeDescription">$5,000 MXN EN EFECTIVO</p></div>
+<div id="prizeMedia" class="media"><span class="muted">Imagen del premio</span></div>
+</div></section>
+
+<section id="video"><div class="wrap"><h2 class="title">Video promocional</h2><div id="videoMedia" class="media"><span class="muted">Video por configurar</span></div></div></section>
+
+<section id="pagos"><div class="wrap"><h2 class="title">Datos para depósito o transferencia</h2><p class="sub">Usa únicamente los datos publicados en esta página.</p>
+<div class="pay-grid">
+<div class="card"><div class="muted">Titular / contacto</div><div id="payName" class="pay-val">Por configurar</div></div>
+<div class="card"><div class="muted">Banco / medio</div><div id="payBank" class="pay-val">Por configurar</div></div>
+<div class="card"><div class="muted">Tarjeta / cuenta / CLABE</div><div id="payAccount" class="pay-val">Por configurar</div></div>
+</div><div class="card" style="margin-top:14px"><div class="muted">Nota de pago</div><div id="payNote">Confirma tu pago con el administrador.</div></div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><b>🎟️ RÍFATELA YA</b><div id="footerText" style="margin-top:6px">Todos los derechos reservados.</div></div></footer>
+
+<script>
+const SUPABASE_URL="https://sckyenlyjajngjqiytoz.supabase.co";
+const SUPABASE_KEY="sb_publishable_o1RLhzsBgAgECcUzui25Hg_BbztaVzj";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let settings={total_tickets:99,ticket_price:20};
+let tickets=[];
+let selected=new Set();
+let lastReservation=null;
+
+const $=id=>document.getElementById(id);
+const money=v=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(Number(v||0));
+const pad=n=>String(n).padStart(3,'0');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function youtubeEmbed(url){
+  try{
+    const u=new URL(url);
+    let id='';
+    if(u.hostname.includes('youtu.be')) id=u.pathname.slice(1);
+    else if(u.hostname.includes('youtube.com')) id=u.searchParams.get('v')||u.pathname.split('/').pop();
+    return id?`https://www.youtube.com/embed/${id}`:null;
+  }catch(e){return null}
+}
+function renderMedia(){
+  if(settings.prize_image_url) $('prizeMedia').innerHTML=`<img src="${esc(settings.prize_image_url)}" alt="Premio">`;
+  else $('prizeMedia').innerHTML='<span class="muted">Imagen del premio</span>';
+  const v=settings.promo_video_url||'';
+  const yt=youtubeEmbed(v);
+  if(yt) $('videoMedia').innerHTML=`<iframe src="${yt}" allowfullscreen></iframe>`;
+  else if(v) $('videoMedia').innerHTML=`<video controls playsinline src="${esc(v)}"></video>`;
+  else $('videoMedia').innerHTML='<span class="muted">Video por configurar</span>';
+}
+function applySettings(){
+  $('heroTitle').textContent=settings.hero_title||'RÍFATELA YA';
+  $('heroDescription').textContent=settings.hero_description||'';
+  $('heroButton').textContent=settings.hero_button_text||'ELEGIR BOLETOS';
+  $('ticketTitle').textContent=settings.ticket_title||'ELIGE TUS BOLETOS';
+  $('ticketDescription').textContent=settings.ticket_description||'';
+  $('reserveBtn').textContent=settings.reserve_button_text||'RESERVAR BOLETOS';
+  $('prizeTitle').textContent=settings.prize_title||'PREMIO ÚNICO';
+  $('prizeDescription').textContent=settings.prize_description||'';
+  $('payName').textContent=settings.payment_name||'Por configurar';
+  $('payBank').textContent=settings.payment_bank||'Por configurar';
+  $('payAccount').textContent=settings.payment_account||'Por configurar';
+  $('payNote').textContent=settings.payment_note||'Confirma tu pago con el administrador.';
+  $('footerText').textContent=settings.footer_text||'Todos los derechos reservados.';
+  if(settings.winner_ticket){
+    $('winnerBox').style.display='block';
+    $('winnerTicket').textContent=pad(settings.winner_ticket);
+    $('winnerDate').textContent=settings.winner_selected_at?new Date(settings.winner_selected_at).toLocaleString('es-MX'):'';
+  } else $('winnerBox').style.display='none';
+  renderMedia(); updateSelected();
+}
+function renderTickets(){
+  const map=new Map(tickets.map(t=>[t.number,t.status]));
+  $('ticketGrid').innerHTML='';
+  for(let i=1;i<=Number(settings.total_tickets||99);i++){
+    const st=map.get(i)||'available';
+    const b=document.createElement('button');
+    b.className='ticket '+(st==='reserved'?'reserved':st==='sold'?'sold':'');
+    if(selected.has(i)&&st==='available') b.classList.add('selected');
+    b.textContent=pad(i);
+    b.disabled=st!=='available' || settings.raffle_status!=='active';
+    b.onclick=()=>{selected.has(i)?selected.delete(i):selected.add(i);renderTickets();updateSelected()};
+    $('ticketGrid').appendChild(b);
+  }
+}
+function updateSelected(){
+  const nums=[...selected].sort((a,b)=>a-b);
+  $('selectedChips').innerHTML=nums.length?nums.map(n=>`<span class="chip">${pad(n)}</span>`).join(''):'<span class="muted">Ninguno</span>';
+  $('selectedTotal').textContent=money(nums.length*Number(settings.ticket_price||20))+' MXN';
+}
+async function loadAll(){
+  const [sres,tres]=await Promise.all([
+    sb.from('rifa_settings').select('*').eq('id',1).single(),
+    sb.from('rifa_tickets').select('number,status').order('number')
+  ]);
+  if(sres.data) settings=sres.data;
+  if(tres.data) tickets=tres.data;
+  applySettings();renderTickets();
+}
+async function reserve(){
+  $('reserveError').textContent='';
+  const nums=[...selected].sort((a,b)=>a-b);
+  if(!nums.length){$('reserveError').textContent='Selecciona al menos un boleto.';return}
+  const name=$('customerName').value.trim(),phone=$('customerPhone').value.trim(),address=$('customerAddress').value.trim();
+  if(name.length<2||phone.length<7){$('reserveError').textContent='Completa nombre y teléfono.';return}
+  $('reserveBtn').disabled=true;$('reserveBtn').textContent='RESERVANDO...';
+  const {data,error}=await sb.rpc('rifa_reserve_tickets',{p_name:name,p_phone:phone,p_address:address,p_tickets:nums});
+  $('reserveBtn').disabled=false;$('reserveBtn').textContent=settings.reserve_button_text||'RESERVAR BOLETOS';
+  if(error){$('reserveError').textContent=error.message||'No se pudo reservar.';await loadAll();return}
+  lastReservation=data;selected.clear();await loadAll();showConfirmation(data,name,phone);
+}
+function showConfirmation(r,name,phone){
+  const w=(settings.whatsapp_number||'').replace(/\D/g,'');
+  const msg=`Hola, hice una reservación. Folio: ${r.folio}. Boletos: ${r.tickets.map(pad).join(', ')}. Total: ${money(r.total)}. Nombre: ${name}.`;
+  const wa=w?`https://wa.me/${w}?text=${encodeURIComponent(msg)}`:'#';
+  $('confirmation').style.display='block';
+  $('confirmation').innerHTML=`
+    <h3>Reserva creada</h3>
+    <p><b>Folio:</b> ${esc(r.folio)}</p>
+    <div class="chips">${r.tickets.map(n=>`<span class="chip">${pad(n)}</span>`).join('')}</div>
+    <p><b>Total:</b> ${money(r.total)}</p>
+    <div class="notice">Paso 4 pendiente: por ahora los apartados no vencen automáticamente.</div>
+    <label>Subir comprobante de pago</label>
+    <input id="proofFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf">
+    <button class="btn ghost" id="uploadProof" style="margin-top:10px">SUBIR COMPROBANTE</button>
+    ${w?`<a class="btn primary" style="display:inline-block;text-decoration:none;margin-top:10px" target="_blank" href="${wa}">ENVIAR POR WHATSAPP</a>`:''}
+    <div id="proofStatus" style="margin-top:10px;color:#ff9ab2"></div>`;
+  $('uploadProof').onclick=uploadProof;
+  $('confirmation').scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function uploadProof(){
+  const f=$('proofFile').files[0]; if(!f){$('proofStatus').textContent='Selecciona un archivo.';return}
+  if(!lastReservation) return;
+  $('uploadProof').disabled=true;$('proofStatus').textContent='Subiendo...';
+  const safe=f.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const path=`${lastReservation.id}/${Date.now()}-${safe}`;
+  const up=await sb.storage.from('rifa-proofs').upload(path,f,{upsert:false,contentType:f.type});
+  if(up.error){$('proofStatus').textContent=up.error.message;$('uploadProof').disabled=false;return}
+  const res=await sb.rpc('rifa_attach_proof',{p_reservation_id:lastReservation.id,p_folio:lastReservation.folio,p_path:path});
+  $('proofStatus').textContent=res.error?'Archivo subido, pero no se pudo asociar.':'Comprobante enviado correctamente.';
+  $('uploadProof').disabled=false;
+}
+$('heroButton').onclick=()=>$('boletos').scrollIntoView({behavior:'smooth'});
+$('reserveBtn').onclick=reserve;
+
+sb.channel('rifa-public-realtime')
+.on('postgres_changes',{event:'*',schema:'public',table:'rifa_tickets'},async()=>{const r=await sb.from('rifa_tickets').select('number,status').order('number');if(r.data){tickets=r.data;for(const n of [...selected]){const t=tickets.find(x=>x.number===n);if(t&&t.status!=='available')selected.delete(n)}renderTickets();updateSelected()}})
+.on('postgres_changes',{event:'*',schema:'public',table:'rifa_settings'},async()=>{const r=await sb.from('rifa_settings').select('*').eq('id',1).single();if(r.data){settings=r.data;applySettings();renderTickets()}})
+.subscribe();
+
+loadAll();
+</script>
+</body>
+</html>
