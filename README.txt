@@ -6,3 +6,5 @@ Archivos principales:
 - netlify.toml: configuración básica para Netlify
 
 El sitio usa el proyecto Supabase configurado dentro de los archivos HTML.
+
+Última actualización para despliegue automático en Netlify: 2026-09-01.
