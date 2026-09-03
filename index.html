@@ -84,7 +84,7 @@ let lastReservation=null;
 
 const $=id=>document.getElementById(id);
 const money=v=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(Number(v||0));
-const pad=n=>String(n).padStart(3,'0');
+const pad=n=>String(n).padStart(2,'0');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function youtubeEmbed(url){
@@ -164,11 +164,12 @@ async function reserve(){
   const {data,error}=await sb.rpc('rifa_reserve_tickets',{p_name:name,p_phone:phone,p_address:address,p_tickets:nums});
   $('reserveBtn').disabled=false;$('reserveBtn').textContent=settings.reserve_button_text||'RESERVAR BOLETOS';
   if(error){$('reserveError').textContent=error.message||'No se pudo reservar.';await loadAll();return}
-  lastReservation=data;selected.clear();await loadAll();showConfirmation(data,name,phone);
+  lastReservation=data;selected.clear();await loadAll();showConfirmation(data,name,phone,address);
 }
-function showConfirmation(r,name,phone){
+function showConfirmation(r,name,phone,address){
   const w=(settings.whatsapp_number||'').replace(/\D/g,'');
-  const msg=`Hola, hice una reservación. Folio: ${r.folio}. Boletos: ${r.tickets.map(pad).join(', ')}. Total: ${money(r.total)}. Nombre: ${name}.`;
+  const addressText=address||'No proporcionada';
+  const msg=`Hola, hice una reservación. Folio: ${r.folio}. Boletos: ${r.tickets.map(pad).join(', ')}. Total: ${money(r.total)}. Nombre: ${name}. Teléfono: ${phone}. Dirección: ${addressText}.`;
   const wa=w?`https://wa.me/${w}?text=${encodeURIComponent(msg)}`:'#';
   $('confirmation').style.display='block';
   $('confirmation').innerHTML=`
