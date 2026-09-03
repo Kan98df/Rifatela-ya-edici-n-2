@@ -85,7 +85,7 @@ const SUPABASE_KEY="sb_publishable_o1RLhzsBgAgECcUzui25Hg_BbztaVzj";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 const money=v=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(Number(v||0));
-const pad=n=>String(n).padStart(3,'0');
+const pad=n=>String(n).padStart(2,'0');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let settings={},tickets=[],reservations=[],activity=[],selectedTickets=new Set(),profile=null;
 
@@ -177,7 +177,7 @@ async function uploadSiteFile(file,folder){
  const r=await sb.storage.from('rifa-site-media').upload(path,file,{upsert:false,contentType:file.type});if(r.error)throw r.error;
  return sb.storage.from('rifa-site-media').getPublicUrl(path).data.publicUrl;
 }
-function bindPreview(inputId,previewId,type){$ (inputId).onchange=()=>{const f=$(inputId).files[0];if(!f)return;const u=URL.createObjectURL(f);$(previewId).innerHTML=type==='video'?`<video controls src="${u}"></video>`:`<img src="${u}">`}}
+function bindPreview(inputId,previewId,type){$(inputId).onchange=()=>{const f=$(inputId).files[0];if(!f)return;const u=URL.createObjectURL(f);$(previewId).innerHTML=type==='video'?`<video controls src="${u}"></video>`:`<img src="${u}">`}}
 bindPreview('heroFile','heroPreview','image');bindPreview('prizeFile','prizePreview','image');bindPreview('videoFile','videoPreview','video');
 $('saveContent').onclick=async()=>{
  try{
